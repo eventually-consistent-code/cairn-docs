@@ -2,7 +2,7 @@
   "label": "Research",
   "position": 2,
   "customProps": {
-    "cairn_version": 7,
+    "cairn_version": 8,
     "cairn_release": "2.6.0"
   },
   "link": {

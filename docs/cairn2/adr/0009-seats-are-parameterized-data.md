@@ -4,7 +4,7 @@ sidebar_position: 9
 mdx:
   format: md
 sidebar_custom_props:
-  cairn_version: 2
+  cairn_version: 3
   cairn_release: "2.6.0"
 ---
 
