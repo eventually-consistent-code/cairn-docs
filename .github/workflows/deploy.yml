@@ -1,0 +1,68 @@
+########################################################################
+# Build the Docusaurus site and publish it to GitHub Pages.            #
+#                                                                      #
+# The docs/ tree is written by cairn's docs connector and committed by #
+# a human; this workflow only builds what is already in the repo. It   #
+# never generates content.                                             #
+########################################################################
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  # Manual re-run, for when Pages settings change but the content has not.
+  workflow_dispatch:
+
+# Least privilege: read the tree, mint the Pages deployment, nothing else.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. A queued run supersedes an older queued one, but
+# never cancels a deploy already in flight -- a half-published site is
+# worse than a late one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ci, not install: the committed lockfile is the source of truth,
+      # and a build that silently resolves different versions than the
+      # ones tested locally is not the same build.
+      - name: install
+        run: npm ci
+
+      # The site config sets onBrokenLinks to warn, because cairn-published
+      # pages can cross-link before every neighbour exists. That means the
+      # warnings in this log are the signal worth reading -- a green build
+      # is not proof that every link resolves.
+      - name: build
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

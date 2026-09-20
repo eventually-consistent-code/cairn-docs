@@ -6,8 +6,13 @@
 const config = {
   title: "cairn docs",
   tagline: "docs published by cairn",
-  url: "https://example.com",
-  baseUrl: "/",
+  // Project page on a user account: the site lives under /<repo>/.
+  // Getting baseUrl wrong is the usual cause of a page that loads with
+  // no styling, so these two move together with the repo name.
+  url: "https://eventually-consistent-code.github.io",
+  baseUrl: "/cairn-docs/",
+  organizationName: "eventually-consistent-code",
+  projectName: "cairn-docs",
 
   // cairn-published pages may cross-link before every neighbor exists —
   // warn, don't fail the build.
